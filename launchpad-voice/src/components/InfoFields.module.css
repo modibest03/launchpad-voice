@@ -1,0 +1,44 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.field {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--rad-sm);
+  padding: 10px 13px;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field.filled {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.label {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.value {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.value.empty {
+  color: var(--text-3);
+  font-weight: 400;
+  font-style: italic;
+}

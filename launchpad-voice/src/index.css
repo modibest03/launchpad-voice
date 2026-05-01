@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #1D9E75;
+  --accent-light: #E1F5EE;
+  --accent-mid: #0F6E56;
+  --accent-dark: #085041;
+  --surface: #ffffff;
+  --surface-2: #f8f9f8;
+  --surface-3: #f2f4f2;
+  --border: rgba(0,0,0,0.08);
+  --border-md: rgba(0,0,0,0.14);
+  --text: #0e1210;
+  --text-2: #4a5450;
+  --text-3: #8a9490;
+  --danger: #E24B4A;
+  --warn: #EF9F27;
+  --blue: #378ADD;
+  --rad: 12px;
+  --rad-sm: 8px;
+  --rad-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  background: var(--surface-3);
+  font-family: var(--font-body);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button { cursor: pointer; font-family: var(--font-body); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; }
