@@ -139,7 +139,7 @@ def build_tts(language: str):
             logger.info("TTS: ElevenLabs Turbo v2.5")
             return elevenlabs.TTS(
                 model="eleven_turbo_v2_5",
-                voice_id=VOICE_IDS.get(language, VOICE_IDS["en"]),
+                # voice_id=VOICE_IDS.get(language, VOICE_IDS["en"]),
                 api_key=eleven_key,
             )
         except Exception as e:
