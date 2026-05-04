@@ -1,0 +1,151 @@
+{
+  "session_id": "c4bec20b-d5fc-485b-8deb-33f593f5fa1e",
+  "timestamp": "2026-05-02T00:29:53.026051+00:00",
+  "category": "immigration",
+  "language": "en",
+  "urgency_score": 5,
+  "extraction_status": "fallback",
+  "note": "Automatic extraction failed. Review transcript below.",
+  "transcript": [
+    {
+      "role": "assistant",
+      "text": "Hi there, I'm your Launchpad immigration advisor and I'm here to help you navigate whatever visa challenge you're facing. What's your name and what's your company called?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. My name is Shafiz. I'll book"
+    },
+    {
+      "role": "user",
+      "text": "My company name is Mailtime."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it Shafiz from Mailtime. What stage is your company at right now - are you pre-seed, seed, or further along?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. So let's see. We're in stage one. We are"
+    },
+    {
+      "role": "user",
+      "text": "build it, and we are trying to, uh, scale the project"
+    },
+    {
+      "role": "user",
+      "text": "and make it"
+    },
+    {
+      "role": "user",
+      "text": "more available for users."
+    },
+    {
+      "role": "assistant",
+      "text": "Sounds like you're in the pre-seed building stage. What's your nationality and what visa status are you currently on in the US?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. So, currently, my nationality, I'm from Nigeria."
+    },
+    {
+      "role": "user",
+      "text": "And I don't have anything to do with this."
+    },
+    {
+      "role": "assistant",
+      "text": "So you're Nigerian and don't currently have US visa status. What's the immigration challenge you're facing right now - are you trying to get your first US visa or is there something else going on?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. Sure. I'm just trying to get my first visa."
+    },
+    {
+      "role": "assistant",
+      "text": "What type of visa are you looking to apply for, and is there any specific deadline you're working with?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. Come again."
+    },
+    {
+      "role": "assistant",
+      "text": "What kind of US visa are you hoping to get - like an O-1 for extraordinary ability, or another type? And do you have any deadlines you need to meet?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. So I'm"
+    },
+    {
+      "role": "user",
+      "text": "I'm just looking for a visitor to make me"
+    },
+    {
+      "role": "assistant",
+      "text": "So you're looking for a visitor visa to come to the US. Have you already started working with an immigration attorney or filed any applications yet?"
+    },
+    {
+      "role": "user",
+      "text": "Not really."
+    },
+    {
+      "role": "assistant",
+      "text": "How is not having US visa access affecting your business right now - is it impacting meetings with investors, hiring, or other parts of running Mailtime?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah."
+    },
+    {
+      "role": "user",
+      "text": "It is."
+    },
+    {
+      "role": "assistant",
+      "text": "Can you tell me a bit more about how it's affecting your business - what specific challenges is it creating for Mailtime?"
+    },
+    {
+      "role": "user",
+      "text": "So, currently, I can't run my business there because I don't have the business to"
+    },
+    {
+      "role": "user",
+      "text": "establish the new token I'm looking for."
+    },
+    {
+      "role": "user",
+      "text": "To get my business running there."
+    },
+    {
+      "role": "user",
+      "text": "And I need the for the business"
+    },
+    {
+      "role": "user",
+      "text": "to go."
+    },
+    {
+      "role": "assistant",
+      "text": "I understand you need to be in the US to properly establish and run your business there. Have you ever had any visa denials or issues with US immigration before?"
+    },
+    {
+      "role": "user",
+      "text": "No. Not at all. I've never tried it once."
+    },
+    {
+      "role": "assistant",
+      "text": "What would success look like for you - what's your ideal outcome with getting US visa access for your business?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. Seriously, I don't I just don't know how to get it."
+    },
+    {
+      "role": "user",
+      "text": "So maybe that's my issue."
+    },
+    {
+      "role": "assistant",
+      "text": "Thank you \u2014 I have everything I need to prepare a full brief for your immigration attorney. Give me just a moment.\n\n<context_json>\n{\n  \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"timestamp\": \"2024-12-19T10:30:00Z\",\n  \"category\": \"immigration\",\n  \"language\": \"en\",\n  \"urgency_score\": 6,\n  \"founder\": {\n    \"name\": \"Shafiz\",\n    \"company\": \"Mailtime\",\n    \"stage\": \"pre-seed\",\n    \"nationality\": \"Nigeria\",\n    \"current_visa\": \"none\",\n    \"visa_status\": \"none\"\n  },\n  \"issue"
+    }
+  ]
+}
