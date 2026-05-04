@@ -1,0 +1,119 @@
+{
+  "session_id": "3f1c4d4d-103a-4582-97e2-f72cc223d211",
+  "timestamp": "2026-05-04T12:35:55.105642+00:00",
+  "category": "immigration",
+  "language": "en",
+  "urgency_score": 5,
+  "extraction_status": "fallback",
+  "note": "Automatic extraction failed. Review transcript below.",
+  "transcript": [
+    {
+      "role": "assistant",
+      "text": "Hi there! I'm your Launchpad immigration advisor, and I'm here to help you work through whatever visa or immigration challenge you're facing. What's your name and what's your company called?"
+    },
+    {
+      "role": "user",
+      "text": "My name is Abdul Majid, and my company's name is Motiboo."
+    },
+    {
+      "role": "assistant",
+      "text": "Nice to meet you, Abdul. What stage is Motiboo at right now - are you pre-seed, seed, or further along?"
+    },
+    {
+      "role": "user",
+      "text": "I'm currently in."
+    },
+    {
+      "role": "assistant",
+      "text": "I didn't catch that - what stage is your company at? Are you pre-seed, seed, Series A, or somewhere else?"
+    },
+    {
+      "role": "user",
+      "text": "Currently, I'd proceed."
+    },
+    {
+      "role": "assistant",
+      "text": "I'm having trouble hearing your company stage clearly. Could you tell me again - is Motiboo pre-seed, seed, Series A, or at another stage?"
+    },
+    {
+      "role": "user",
+      "text": "Proceed."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it, let's move forward. What's your nationality, and what visa status do you currently have in the US?"
+    },
+    {
+      "role": "user",
+      "text": "My nationality is"
+    },
+    {
+      "role": "user",
+      "text": "Nigeria. And I don't have any status in The US currently."
+    },
+    {
+      "role": "assistant",
+      "text": "Thanks Abdul. So you're a Nigerian citizen with no current US status. What's the specific immigration challenge you're facing right now - are you looking to get a visa to come to the US, or is there another issue?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. I'm looking to get a visa to The US."
+    },
+    {
+      "role": "assistant",
+      "text": "What type of visa are you hoping to get, and is there any particular deadline you're working with?"
+    },
+    {
+      "role": "user",
+      "text": "Yes. Hits hit to v Visa."
+    },
+    {
+      "role": "user",
+      "text": "I would love to get in by Wednesday."
+    },
+    {
+      "role": "assistant",
+      "text": "I understand you're looking at an H-1B visa and need to get to the US by Wednesday - that's a very tight timeline. Have you already started working with an immigration attorney or filed any paperwork for this?"
+    },
+    {
+      "role": "user",
+      "text": "No."
+    },
+    {
+      "role": "assistant",
+      "text": "This is affecting your business operations right now - can you tell me how not being able to get to the US is impacting Motiboo?"
+    },
+    {
+      "role": "user",
+      "text": "Yes. I would love to get get"
+    },
+    {
+      "role": "user",
+      "text": "to hire developers. And since I'm not there currently, it's affecting the business."
+    },
+    {
+      "role": "assistant",
+      "text": "I understand - being unable to hire developers in the US is definitely impacting your growth. Have you ever had any visa denials, overstays, or other immigration issues in the past?"
+    },
+    {
+      "role": "user",
+      "text": "No. This is my first time."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it, this is your first US visa application. What would success look like for you - what's your ideal outcome here?"
+    },
+    {
+      "role": "user",
+      "text": "To be able to grow the business,"
+    },
+    {
+      "role": "user",
+      "text": "in a larger scale."
+    },
+    {
+      "role": "assistant",
+      "text": "Thank you \u2014 I have everything I need to prepare a full brief for your immigration attorney. Give me just a moment.\n\n<context_json>\n{\n  \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"timestamp\": \"2024-12-19T10:30:00Z\",\n  \"category\": \"immigration\",\n  \"language\": \"en\",\n  \"urgency_score\": 9,\n  \"founder\": {\n    \"name\": \"Abdul Majid\",\n    \"company\": \"Motiboo\",\n    \"stage\": \"unknown\",\n    \"nationality\": \"Nigeria\",\n    \"current_visa\": \"none\",\n    \"visa_status\": \"none\"\n  },\n  \"issue\":"
+    }
+  ]
+}

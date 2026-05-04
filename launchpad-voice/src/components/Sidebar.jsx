@@ -16,7 +16,7 @@ export default function Sidebar({ category, onCategory }) {
         </button>
       ))}
 
-      <div className={styles.sectionLabel} style={{ marginTop: 16 }}>Recent</div>
+      {/* <div className={styles.sectionLabel} style={{ marginTop: 16 }}>Recent</div>
       {[{ time: 'Today, 09:14', cat: 'Immigration' }, { time: 'Yesterday, 15:40', cat: 'Banking' }].map((s, i) => (
         <div key={i} className={styles.histItem}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -27,7 +27,7 @@ export default function Sidebar({ category, onCategory }) {
             <div className={styles.histCat}>{s.cat}</div>
           </div>
         </div>
-      ))}
+      ))} */}
     </aside>
   );
 }

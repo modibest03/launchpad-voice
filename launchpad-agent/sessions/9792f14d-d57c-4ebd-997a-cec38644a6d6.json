@@ -1,0 +1,103 @@
+{
+  "session_id": "9792f14d-d57c-4ebd-997a-cec38644a6d6",
+  "timestamp": "2026-05-04T14:23:24.371991+00:00",
+  "category": "immigration",
+  "language": "en",
+  "urgency_score": 5,
+  "extraction_status": "fallback",
+  "note": "Automatic extraction failed. Review transcript below.",
+  "transcript": [
+    {
+      "role": "assistant",
+      "text": "Hi there! I'm your Launchpad immigration advisor, and I'm here to help you navigate whatever visa or immigration challenge you're facing. What's your name and what's your company called?"
+    },
+    {
+      "role": "user",
+      "text": "My name is Abdul Majid, and my company's name is Modibo."
+    },
+    {
+      "role": "assistant",
+      "text": "Nice to meet you, Abdul. What stage is Modibo at right now - are you pre-seed, seed, or further along?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. I'm currently at pre seat."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it, pre-seed stage. What's your nationality, and what visa status do you currently have in the US?"
+    },
+    {
+      "role": "user",
+      "text": "My nationality is Nigerian, and"
+    },
+    {
+      "role": "user",
+      "text": "I currently live in Nigeria. I have any status"
+    },
+    {
+      "role": "assistant",
+      "text": "I understand - you're in Nigeria without any current US visa status. What's the immigration challenge you're facing right now that brought you to Launchpad?"
+    },
+    {
+      "role": "user",
+      "text": "I am looking to migrate."
+    },
+    {
+      "role": "assistant",
+      "text": "What type of visa are you looking to get to come to the US, and is this related to your startup Modibo?"
+    },
+    {
+      "role": "user",
+      "text": "Yes. I'm looking for h one b visa."
+    },
+    {
+      "role": "assistant",
+      "text": "Are there any hard deadlines you're working with - like when you need to be in the US, or any application deadlines coming up?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. I would love to be in The US."
+    },
+    {
+      "role": "user",
+      "text": "Next this coming Wednesday."
+    },
+    {
+      "role": "assistant",
+      "text": "That's just a few days away. Have you already started working with an immigration attorney, or filed any applications for the H-1B visa?"
+    },
+    {
+      "role": "user",
+      "text": "No."
+    },
+    {
+      "role": "assistant",
+      "text": "I need to let you know that getting to the US by Wednesday with an H-1B visa isn't possible - H-1B applications take many months and have specific filing periods. How is this timeline affecting your company Modibo right now?"
+    },
+    {
+      "role": "user",
+      "text": "Not much."
+    },
+    {
+      "role": "assistant",
+      "text": "What would the ideal outcome look like for you - what do you ultimately want to achieve with US immigration for yourself and your company?"
+    },
+    {
+      "role": "user",
+      "text": "I want to hire developers from US."
+    },
+    {
+      "role": "assistant",
+      "text": "Have you had any previous visa denials, overstays, or other immigration issues with any country that I should know about?"
+    },
+    {
+      "role": "user",
+      "text": "No."
+    },
+    {
+      "role": "assistant",
+      "text": "Thank you - I have everything I need to prepare a full brief for your immigration attorney. Give me just a moment.\n\n<context_json>\n{\n  \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"timestamp\": \"2024-12-19T10:30:00Z\",\n  \"category\": \"immigration\",\n  \"language\": \"en\",\n  \"urgency_score\": 8,\n  \"founder\": {\n    \"name\": \"Abdul Majid\",\n    \"company\": \"Modibo\",\n    \"stage\": \"pre-seed\",\n    \"nationality\": \"Nigerian\",\n    \"current_visa\": \"none\",\n    \"visa_status\": \"none\"\n  },\n  \"issue"
+    }
+  ]
+}

@@ -1,35 +1,79 @@
 import { useState } from 'react';
 import styles from './ContextReport.module.css';
-import { CONTEXT_DATA } from '../data/mockData';
 import { LANGUAGES } from '../data/i18n';
 
 const URGENCY_CLASS = { Critical: 'critical', High: 'high', Medium: 'medium' };
 
-export default function ContextReport({ category, lang, onBack }) {
+function get(obj, ...paths) {
+  for (const path of paths) {
+    const parts = path.split('.');
+    let val = obj;
+    for (const p of parts) val = val?.[p];
+    if (val !== undefined && val !== null && val !== '') return val;
+  }
+  return null;
+}
+
+export default function ContextReport({ category, lang, liveContext, onBack }) {
   const [copied, setCopied] = useState(false);
-  const data = CONTEXT_DATA[category];
   const langName = LANGUAGES.find(l => l.code === lang)?.name || lang;
 
+  // Use liveContext from real session — never fall back to mock data
+  const ctx = liveContext || {};
+  const founder = ctx.founder || {};
+  const issue   = ctx.issue   || {};
+  const recs    = ctx.advisor_recommendations || ctx.recommendations || [];
+  const summary = ctx.summary || ctx.transcript_summary || '';
+  const transcript = ctx.transcript || [];
+
+  const name       = get(founder, 'name')        || '—';
+  const company    = get(founder, 'company')      || '—';
+  const stage      = get(founder, 'stage')        || '—';
+  const nationality= get(founder, 'nationality', 'incorporation_country') || '—';
+  const catLabel   = get(issue, 'type', 'category') || category || '—';
+  const subTopic   = get(issue, 'subTopic', 'sub_topic', 'description') || '—';
+  const urgency    = get(ctx, 'urgency_score')
+    ? scoreToLabel(ctx.urgency_score)
+    : get(issue, 'urgency') || '—';
+  const complexity = get(issue, 'complexity', 'enforcement_risk') || '—';
+
+  function scoreToLabel(score) {
+    if (score >= 9) return 'Critical';
+    if (score >= 7) return 'High';
+    if (score >= 4) return 'Medium';
+    return 'Low';
+  }
+
   function handleCopy() {
-    const payload = {
-      generatedAt: new Date().toISOString(),
-      language: lang,
-      founder: { name: data.name, company: data.company, stage: data.stage, nationality: data.nationality },
-      issue: { category: data.category, subTopic: data.subTopic, urgency: data.urgency, complexity: data.complexity },
-      summary: data.summary,
-      recommendations: data.recommendations,
-    };
-    navigator.clipboard.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
+    navigator.clipboard.writeText(JSON.stringify(ctx, null, 2)).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+  }
+
+  if (!liveContext) {
+    return (
+      <div className={styles.wrap}>
+        <div className={styles.header}>
+          <div>
+            <h2 className={styles.title}>No session data</h2>
+            <p className={styles.meta}>Complete a voice session to generate the advisor brief.</p>
+          </div>
+        </div>
+        <div className={styles.actions}>
+          <button className={styles.btnBack} onClick={onBack}>← New session</button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
         <div>
-          <h2 className={styles.title}>Advisor context — {data.name}</h2>
-          <p className={styles.meta}>Generated just now · {data.category} · {langName}</p>
+          <h2 className={styles.title}>Advisor context — {name}</h2>
+          <p className={styles.meta}>
+            Generated just now · {category.charAt(0).toUpperCase() + category.slice(1)} · {langName}
+          </p>
         </div>
         <div className={styles.badge}>
           <span className={styles.badgeDot} />
@@ -40,7 +84,13 @@ export default function ContextReport({ category, lang, onBack }) {
       <div className={styles.section}>
         <div className={styles.sectionLabel}>Founder profile</div>
         <div className={styles.card}>
-          {[['Name', data.name], ['Company', data.company], ['Stage', data.stage], ['Nationality', data.nationality], ['Session language', langName]].map(([k, v]) => (
+          {[
+            ['Name', name],
+            ['Company', company],
+            ['Stage', stage],
+            ['Nationality', nationality],
+            ['Session language', langName],
+          ].map(([k, v]) => (
             <div key={k} className={styles.row}>
               <span className={styles.key}>{k}</span>
               <span className={styles.val}>{v}</span>
@@ -52,7 +102,11 @@ export default function ContextReport({ category, lang, onBack }) {
       <div className={styles.section}>
         <div className={styles.sectionLabel}>Issue classification</div>
         <div className={styles.card}>
-          {[['Category', data.category], ['Sub-topic', data.subTopic], ['Complexity', data.complexity]].map(([k, v]) => (
+          {[
+            ['Category', category.charAt(0).toUpperCase() + category.slice(1)],
+            ['Sub-topic', subTopic],
+            ['Complexity', complexity],
+          ].map(([k, v]) => (
             <div key={k} className={styles.row}>
               <span className={styles.key}>{k}</span>
               <span className={styles.val}>{v}</span>
@@ -60,31 +114,55 @@ export default function ContextReport({ category, lang, onBack }) {
           ))}
           <div className={styles.row}>
             <span className={styles.key}>Urgency</span>
-            <span className={[styles.urgency, styles[URGENCY_CLASS[data.urgency] || 'medium']].join(' ')}>
-              {data.urgency}
-            </span>
+            {urgency !== '—' ? (
+              <span className={[styles.urgency, styles[URGENCY_CLASS[urgency] || 'medium']].join(' ')}>
+                {urgency}
+              </span>
+            ) : (
+              <span className={styles.val}>—</span>
+            )}
           </div>
         </div>
       </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionLabel}>Session summary</div>
-        <div className={styles.card}>
-          <p className={styles.summary}>{data.summary}</p>
+      {summary && (
+        <div className={styles.section}>
+          <div className={styles.sectionLabel}>Session summary</div>
+          <div className={styles.card}>
+            <p className={styles.summary}>{summary}</p>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className={styles.section}>
-        <div className={styles.sectionLabel}>Advisor recommendations</div>
-        <div className={styles.recList}>
-          {data.recommendations.map((r, i) => (
-            <div key={i} className={styles.recItem}>
-              <div className={styles.recNum}>{i + 1}</div>
-              <p className={styles.recText}>{r}</p>
-            </div>
-          ))}
+      {recs.length > 0 && (
+        <div className={styles.section}>
+          <div className={styles.sectionLabel}>Advisor recommendations</div>
+          <div className={styles.recList}>
+            {recs.map((r, i) => (
+              <div key={i} className={styles.recItem}>
+                <div className={styles.recNum}>{i + 1}</div>
+                <p className={styles.recText}>{r}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {transcript.length > 0 && (
+        <div className={styles.section}>
+          <div className={styles.sectionLabel}>Session transcript</div>
+          <div className={styles.card}>
+            {transcript.map((msg, i) => (
+              <div key={i} className={styles.txRow}>
+                <span className={[styles.txRole, msg.role === 'user' ? styles.txUser : styles.txAgent].join(' ')}>
+                  {msg.role === 'user' ? 'Founder' : 'Agent'}
+                </span>
+                <p className={styles.txText}>{msg.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className={styles.actions}>
         <button className={styles.btnBack} onClick={onBack}>← New session</button>

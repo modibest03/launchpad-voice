@@ -1,0 +1,155 @@
+{
+  "session_id": "ec3f3e53-8626-4894-bbef-ab40e19a1079",
+  "timestamp": "2026-05-04T14:34:29.502471+00:00",
+  "category": "immigration",
+  "language": "en",
+  "urgency_score": 5,
+  "extraction_status": "fallback",
+  "note": "Automatic extraction failed. Review transcript below.",
+  "transcript": [
+    {
+      "role": "assistant",
+      "text": "Hi there! I'm your Launchpad immigration advisor, and I'm here to help you navigate your visa challenges. What's your name and what's your company called?"
+    },
+    {
+      "role": "user",
+      "text": "Doing"
+    },
+    {
+      "role": "user",
+      "text": "My name is Abdul Majid, and my company's name is"
+    },
+    {
+      "role": "assistant",
+      "text": "Hi Abdul Majid! What's the name of your company?"
+    },
+    {
+      "role": "user",
+      "text": "Motivu."
+    },
+    {
+      "role": "user",
+      "text": "My the name of"
+    },
+    {
+      "role": "user",
+      "text": "my company is Maddu."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it, Abdul - so your company is called Maddu. What stage is your company at right now - are you pre-seed, seed, or further along?"
+    },
+    {
+      "role": "user",
+      "text": "I am currently in the proceed stage."
+    },
+    {
+      "role": "assistant",
+      "text": "Perfect, so you're in the pre-seed stage. What's your nationality, and what type of visa are you currently on in the US?"
+    },
+    {
+      "role": "user",
+      "text": "Come again?"
+    },
+    {
+      "role": "assistant",
+      "text": "What country are you a citizen of, and what's your current visa status in the US?"
+    },
+    {
+      "role": "user",
+      "text": "Okay. Yeah. I'm from Nigeria."
+    },
+    {
+      "role": "assistant",
+      "text": "Thanks Abdul. And what type of visa are you"
+    },
+    {
+      "role": "user",
+      "text": "I'm currently living in Nigeria."
+    },
+    {
+      "role": "assistant",
+      "text": "I see, so you're currently in Nigeria. Are you looking to get a US visa, or do you have a different immigration challenge you need help with?"
+    },
+    {
+      "role": "user",
+      "text": "I'm currently looking"
+    },
+    {
+      "role": "user",
+      "text": "for US visa."
+    },
+    {
+      "role": "assistant",
+      "text": "What type of US visa are you looking to apply for, and what's the main challenge you're facing with your application?"
+    },
+    {
+      "role": "user",
+      "text": "H one b visa."
+    },
+    {
+      "role": "user",
+      "text": "And I don't have any challenge right now."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it - you want to apply for an H-1B visa. Do you have a US employer who's willing to sponsor you, or are you still looking for sponsorship?"
+    },
+    {
+      "role": "user",
+      "text": "Yep."
+    },
+    {
+      "role": "user",
+      "text": "I'm still looking for sponsorship."
+    },
+    {
+      "role": "assistant",
+      "text": "I understand. Do you have any hard deadlines you're working with - like when you need to be in the US for your company, or any specific timeline you're trying to meet?"
+    },
+    {
+      "role": "user",
+      "text": "No. I don't have any timeline."
+    },
+    {
+      "role": "assistant",
+      "text": "That's good - no pressure there. Have you worked with an immigration attorney before, or would this be your first time getting legal help with a visa application?"
+    },
+    {
+      "role": "user",
+      "text": "This is my first time."
+    },
+    {
+      "role": "assistant",
+      "text": "How is not having US work authorization affecting your company right now - is it impacting your ability to raise funding, hire team members, or meet with investors?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. Me too with investors."
+    },
+    {
+      "role": "assistant",
+      "text": "So it's affecting your ability to meet with investors. Have you ever had any visa applications denied before, or any issues with US immigration in the past?"
+    },
+    {
+      "role": "user",
+      "text": "Ethan. No."
+    },
+    {
+      "role": "assistant",
+      "text": "Perfect, so no prior immigration issues. What would success look like for you - ideally, when would you want to have your H-1B visa and be able to work in the US?"
+    },
+    {
+      "role": "user",
+      "text": "Yes."
+    },
+    {
+      "role": "user",
+      "text": "I would love to have it by next month."
+    },
+    {
+      "role": "assistant",
+      "text": "Thank you - I have everything I need to prepare a full brief for your immigration attorney. Give me just a moment.\n\n<context_json>\n{\n  \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"timestamp\": \"2024-12-19T10:30:00Z\",\n  \"category\": \"immigration\",\n  \"language\": \"en\",\n  \"urgency_score\": 6,\n  \"founder\": {\n    \"name\": \"Abdul Majid\",\n    \"company\": \"Maddu\",\n    \"stage\": \"pre-seed\",\n    \"nationality\": \"Nigeria\",\n    \"current_visa\": \"none\",\n    \"visa_status\": \"none\"\n  },\n  \"issue"
+    }
+  ]
+}

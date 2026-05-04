@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styles from './App.module.css';
 import Sidebar from './components/Sidebar';
 import VoiceOrb from './components/VoiceOrb';
@@ -15,32 +15,43 @@ export default function App() {
   const [category, setCategory] = useState('immigration');
   const [view, setView] = useState('session');
 
+  // Use refs to always have fresh values inside callbacks
+  const categoryRef = useRef('immigration');
+  const langRef = useRef('en');
+
   const {
     status, transcript, fields, context, error,
     start, stop, reset,
   } = useRealVoiceSession();
 
   const t = I18N[lang];
-  const isActive  = status === 'speaking' || status === 'listening';
+  const isActive    = status === 'speaking' || status === 'listening';
   const isConnecting = status === 'connecting';
-  const isDone    = status === 'complete';
-  const totalSteps = 8;
+  const isDone      = status === 'complete';
+  const totalSteps  = 8;
   const step = Math.round((transcript.length / 16) * totalSteps);
 
   function handleOrbClick() {
     if (isActive || isConnecting) { stop(); return; }
-    if (status === 'idle') start(category, lang);
+    // Always read from ref — guaranteed fresh even if state hasn't flushed
+    if (status === 'idle') start(categoryRef.current, langRef.current);
   }
 
   function handleCategoryChange(cat) {
+    categoryRef.current = cat;   // update ref immediately
+    setCategory(cat);            // update state for UI
     if (isActive) stop();
     reset();
-    setCategory(cat);
+  }
+
+  function handleLangChange(l) {
+    langRef.current = l;         // update ref immediately
+    setLang(l);
   }
 
   const orbLabel = isConnecting ? 'Connecting...'
-    : isActive ? (status === 'speaking' ? t.speaking : t.listening)
-    : isDone   ? 'Session complete — generate context below'
+    : isActive   ? (status === 'speaking' ? t.speaking : t.listening)
+    : isDone     ? 'Session complete — generate context below'
     : t.tapStart;
 
   return (
@@ -62,7 +73,7 @@ export default function App() {
             <button
               key={l.code}
               className={[styles.langBtn, lang === l.code ? styles.langActive : ''].join(' ')}
-              onClick={() => setLang(l.code)}
+              onClick={() => handleLangChange(l.code)}
             >
               {l.label}
             </button>
@@ -86,6 +97,17 @@ export default function App() {
                     ].join(' ')} />
                   ))}
                 </div>
+              </div>
+
+              {/* Show active category badge */}
+              <div style={{
+                fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em',
+                textTransform: 'uppercase', color: 'var(--accent-mid)',
+                background: 'var(--accent-light)', padding: '3px 10px',
+                borderRadius: '20px', border: '1px solid var(--accent)',
+                marginBottom: '-6px',
+              }}>
+                {category}
               </div>
 
               <VoiceOrb status={status} onClick={handleOrbClick} />

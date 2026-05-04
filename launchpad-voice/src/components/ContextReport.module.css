@@ -64,6 +64,7 @@
   border: 1px solid var(--border);
   border-radius: var(--rad);
   overflow: hidden;
+  padding-left: 20px;
 }
 
 .row {
@@ -155,3 +156,27 @@
   flex: 1;
 }
 .btnPrimary:hover { background: var(--accent-mid); }
+
+.txRow {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.txRow:last-child { border-bottom: none; }
+
+.txRole {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.txAgent { color: var(--accent-mid); }
+.txUser  { color: var(--text-3); }
+
+.txText {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.55;
+}

@@ -1,24 +1,12 @@
 """
-Launchpad Voice Agent  —  Speed-optimized build
-------------------------------------------------
-Target latency budget:
-  STT end-of-speech detection : ~120ms  (endpointing_ms=50, VAD min_silence=0.2)
-  LLM first token              : ~200ms  (haiku-3.5 + prompt caching + max_tokens=180)
-  TTS first audio chunk        : ~80ms   (Deepgram Aura-2 streaming)
-  ─────────────────────────────────────
-  Total perceived delay        : ~400ms  (vs ~1.4s unoptimized)
+Launchpad Voice Agent  —  Multilingual build
+---------------------------------------------
+TTS priority:
+  1. Cartesia Sonic-3  — native multilingual, free tier, low latency
+  2. ElevenLabs        — if ELEVEN_API_KEY set (paid plan required for server)
+  3. Deepgram Aura-2   — English-only fallback
 
-Key optimisations applied:
-  1. Claude Haiku 3.5  — 3× faster than Sonnet, sufficient for conversational Q&A
-  2. Prompt caching    — system prompt cached after first token; saves ~150ms every turn
-  3. max_tokens=180    — agent answers are short; caps generation time
-  4. Deepgram endpointing_ms=50  — detects end-of-speech 3× faster (default 300ms)
-  5. VAD min_silence=0.2s        — stops waiting for silence 2× sooner (default 0.55s)
-  6. min_endpointing_delay=0.08  — session commits turn in 80ms after VAD fires
-  7. max_endpointing_delay=1.8   — don't wait more than 1.8s even on trailing silence
-  8. preemptive_generation=True  — LLM starts before TTS finishes playing (overlap)
-  9. allow_interruptions=True    — founder can cut in naturally, like real conversation
-  10. prefix_padding_duration=0.1 — less audio buffered before speech declared
+Language support: EN, FR, ES, AR, ZH, PT
 """
 
 import json
@@ -38,7 +26,7 @@ from livekit.agents import (
 )
 from livekit.plugins import anthropic, deepgram, silero
 
-from prompts import PROMPTS
+from prompts import get_prompt, LANGUAGE_NAMES
 from utils import build_fallback_context, extract_context_json, save_session
 
 load_dotenv()
@@ -50,199 +38,299 @@ logging.basicConfig(
 logger = logging.getLogger("launchpad.agent")
 
 # ---------------------------------------------------------------------------
-# Deepgram Aura-2 voices
+# Language config
 # ---------------------------------------------------------------------------
-DEEPGRAM_VOICES = {
-    "en": "aura-2-andromeda-en",
-    "fr": "aura-2-andromeda-en",
-    "es": "aura-2-andromeda-en",
-    "ar": "aura-2-andromeda-en",
-    "zh": "aura-2-andromeda-en",
-    "pt": "aura-2-andromeda-en",
-}
-
 DEEPGRAM_STT_LANG = {
     "en": "en-US", "fr": "fr", "es": "es",
     "ar": "ar",    "zh": "zh-CN", "pt": "pt-BR",
 }
 
-# ---------------------------------------------------------------------------
-# Speed-tuned system prompt addendum
-# Forces short, punchy responses to minimise TTS duration and LLM tokens
-# ---------------------------------------------------------------------------
+# Cartesia language codes
+CARTESIA_LANG = {
+    "en": "en",
+    "fr": "fr",
+    "es": "es",
+    "ar": "ar",
+    "zh": "zh",
+    "pt": "pt",
+}
+
+# Cartesia multilingual voice — "Helpful Woman" works across all languages
+CARTESIA_VOICE_ID = "f786b574-daa5-4673-aa0c-cbe3e8534c02"
+
 SPEED_ADDENDUM = """
 
 ## RESPONSE STYLE FOR VOICE (CRITICAL)
-- Keep every response to 1-3 SHORT sentences maximum
-- Never use bullet points, lists, or numbered items — this is voice
+- Keep every conversational response to 1-3 SHORT sentences maximum
+- Never use bullet points, lists, or numbered items in spoken responses — this is voice
 - Never say "Certainly!", "Of course!", "Great question!" — go straight to content
 - After acknowledging an answer, ask the NEXT question immediately
 - Use natural spoken contractions: "I'll", "you've", "what's", "let's"
 - No preamble. No summaries mid-conversation. Just move forward.
+- ALWAYS respond in the same language the founder is speaking
+
+## JSON OUTPUT EXCEPTION
+When outputting the final <context_json> block:
+- The short-response rule does NOT apply — output the COMPLETE JSON
+- Output the full JSON immediately after the termination phrase
+- Do NOT truncate or summarize the JSON
+- The JSON MUST be complete and valid — all fields filled with real data from the conversation
+- Use actual values from the conversation, never placeholder text like "<string>" or "<uuid>"
 """
+
+
+# ---------------------------------------------------------------------------
+# Metadata extraction — 3-strategy approach
+# ---------------------------------------------------------------------------
+def extract_session_meta(ctx: JobContext) -> dict:
+    category   = "immigration"
+    language   = "en"
+    session_id = str(uuid.uuid4())
+
+    # Strategy 1: room name encodes category
+    room_name = ctx.room.name or ""
+    if room_name.startswith("launchpad-"):
+        parts = room_name.split("-")
+        if len(parts) >= 2:
+            cat = parts[1]
+            if cat in ("immigration", "compliance", "banking"):
+                category = cat
+                logger.info(f"Category from room name: {category}")
+        if len(parts) >= 3:
+            session_id = "-".join(parts[2:])
+
+    # Strategy 2: participant metadata JSON
+    try:
+        participants = list(ctx.room.remote_participants.values())
+        if participants:
+            p = participants[0]
+            if p.metadata:
+                meta = json.loads(p.metadata)
+                category   = meta.get("category", category)
+                language   = meta.get("language", language)
+                session_id = meta.get("session_id", session_id)
+                logger.info(f"Category from participant metadata: {category}")
+    except Exception as e:
+        logger.warning(f"Could not parse participant metadata: {e}")
+
+    # Strategy 3: participant attributes
+    try:
+        participants = list(ctx.room.remote_participants.values())
+        if participants:
+            attrs = participants[0].attributes or {}
+            if "category" in attrs:
+                category   = attrs.get("category", category)
+                language   = attrs.get("language", language)
+                session_id = attrs.get("session_id", session_id)
+                logger.info(f"Category from participant attributes: {category}")
+    except Exception as e:
+        logger.warning(f"Could not read participant attributes: {e}")
+
+    return {"category": category, "language": language, "session_id": session_id}
 
 
 # ---------------------------------------------------------------------------
 # Agent
 # ---------------------------------------------------------------------------
 class LaunchpadAgent(Agent):
-    def __init__(self, category: str, session_id: str, room):
-        self.category = category
+    def __init__(self, category: str, session_id: str, room, language: str = 'en'):
+        self.category   = category
         self.session_id = session_id
-        self._room = room
+        self._room      = room
         self._transcript: list[dict] = []
         self._context_emitted = False
 
-        # Inject speed addendum into system prompt
-        base_prompt = PROMPTS.get(category, PROMPTS["immigration"])
+        self.language = language if hasattr(self, '_language_set') else language
+        base_prompt = get_prompt(category, language)
         super().__init__(instructions=base_prompt + SPEED_ADDENDUM)
 
     async def on_enter(self) -> None:
-        logger.info(f"Agent active — category={self.category}")
+        logger.info(f"Agent active — category={self.category}  lang={self.language}")
+        lang_name = LANGUAGE_NAMES.get(self.language, "English")
         await self.session.generate_reply(
             instructions=(
-                "Greet the founder in one warm sentence, say you're their Launchpad advisor, "
-                "then immediately ask for their name and company. Keep it to two sentences max."
+                f"You MUST speak in {lang_name} only. "
+                f"Greet the founder warmly in {lang_name}, "
+                f"introduce yourself as their Launchpad advisor in {lang_name}, "
+                f"then ask for their name and company in {lang_name}. "
+                f"Two sentences maximum. Every word must be in {lang_name}."
             )
         )
 
     async def on_user_turn_completed(self, turn_ctx, new_message) -> None:
-        content = new_message.content
-        if isinstance(content, list):
-            text = " ".join(
-                b.text if hasattr(b, "text") else str(b) for b in content
-            )
-        else:
-            text = str(content) if content else ""
-
+        # Use text_content property — the correct way to extract text from ChatMessage
+        text = ""
+        if hasattr(new_message, "text_content") and new_message.text_content:
+            text = new_message.text_content.strip()
+        elif hasattr(new_message, "content"):
+            raw = new_message.content
+            if isinstance(raw, str):
+                text = raw.strip()
+            elif isinstance(raw, list):
+                parts = []
+                for b in raw:
+                    if isinstance(b, str):
+                        parts.append(b)
+                    elif hasattr(b, "text"):
+                        parts.append(b.text)
+                text = " ".join(parts).strip()
         if text:
             self._transcript.append({"role": "user", "text": text})
             logger.info(f"[user] {text[:120]}")
 
 
 # ---------------------------------------------------------------------------
-# TTS — Deepgram primary, ElevenLabs optional
+# TTS builder — Cartesia primary (multilingual), ElevenLabs optional, Deepgram fallback
 # ---------------------------------------------------------------------------
 def build_tts(language: str):
-    eleven_key = os.getenv("ELEVEN_API_KEY", "").strip()
+    cartesia_key = os.getenv("CARTESIA_API_KEY", "").strip()
+    eleven_key   = os.getenv("ELEVEN_API_KEY", "").strip()
+
+    # Option 1: Cartesia — native multilingual
+    if cartesia_key and len(cartesia_key) > 10:
+        try:
+            from livekit.plugins import cartesia
+            lang_code = CARTESIA_LANG.get(language, "en")
+            logger.info(f"TTS: Cartesia Sonic-3 ({lang_code})")
+            return cartesia.TTS(
+                model="sonic-3",
+                voice=CARTESIA_VOICE_ID,
+                language=lang_code,
+                api_key=cartesia_key,
+            )
+        except Exception as e:
+            logger.warning(f"Cartesia init failed ({e}), trying ElevenLabs")
+
+    # Option 2: ElevenLabs multilingual
     if eleven_key and len(eleven_key) > 20 and not eleven_key.startswith("sk_your"):
         try:
             from livekit.plugins import elevenlabs
-            VOICE_IDS = {
-                "en": "21m00Tcm4TlvDq8ikWAM",
-                "fr": "XB0fDUnXU5powFXDhCwa",
-                "es": "XB0fDUnXU5powFXDhCwa",
-                "ar": "XB0fDUnXU5powFXDhCwa",
-                "zh": "XB0fDUnXU5powFXDhCwa",
-                "pt": "XB0fDUnXU5powFXDhCwa",
-            }
-            logger.info("TTS: ElevenLabs Turbo v2.5")
+            logger.info("TTS: ElevenLabs multilingual v2")
             return elevenlabs.TTS(
-                model="eleven_turbo_v2_5",
-                voice_id=VOICE_IDS.get(language, VOICE_IDS["en"]),
+                model="eleven_multilingual_v2",
+                voice_id="XB0fDUnXU5powFXDhCwa",  # Charlotte
                 api_key=eleven_key,
             )
         except Exception as e:
-            logger.warning(f"ElevenLabs init failed ({e}), using Deepgram TTS")
+            logger.warning(f"ElevenLabs init failed ({e}), using Deepgram")
 
-    logger.info("TTS: Deepgram Aura-2")
-    return deepgram.TTS(
-        model=DEEPGRAM_VOICES.get(language, "aura-2-andromeda-en"),
-    )
+    # Option 3: Deepgram Aura-2 — English only fallback
+    logger.info("TTS: Deepgram Aura-2 (English only fallback)")
+    return deepgram.TTS(model="aura-2-andromeda-en")
 
 
 # ---------------------------------------------------------------------------
-# Job entrypoint
+# Entrypoint
 # ---------------------------------------------------------------------------
 async def entrypoint(ctx: JobContext):
     await ctx.connect()
 
-    raw_meta = ctx.room.metadata or "{}"
+    import asyncio
     try:
-        meta = json.loads(raw_meta)
-    except json.JSONDecodeError:
-        meta = {}
+        await asyncio.wait_for(ctx.wait_for_participant(), timeout=10.0)
+    except asyncio.TimeoutError:
+        logger.warning("No participant joined within 10s, using defaults")
 
-    category   = meta.get("category", "immigration")
-    language   = meta.get("language", "en")
-    session_id = meta.get("session_id") or str(uuid.uuid4())
+    meta       = extract_session_meta(ctx)
+    category   = meta["category"]
+    language   = meta["language"]
+    session_id = meta["session_id"]
 
     logger.info(f"Session — id={session_id}  category={category}  lang={language}")
 
-    agent = LaunchpadAgent(category=category, session_id=session_id, room=ctx.room)
+    agent = LaunchpadAgent(category=category, session_id=session_id, room=ctx.room, language=language)
 
     session = AgentSession(
-        # ── STT ──────────────────────────────────────────────────────────
         stt=deepgram.STT(
             model="nova-3",
             language=DEEPGRAM_STT_LANG.get(language, "en-US"),
             smart_format=True,
             punctuate=True,
             interim_results=True,
-            endpointing_ms=50,        # detect end-of-speech in 50ms (default 300ms)
-            no_delay=True,            # stream partials immediately
-            filler_words=True,        # handle "um", "uh" naturally
+            endpointing_ms=50,
+            no_delay=True,
+            filler_words=True,
         ),
-
-        # ── LLM ──────────────────────────────────────────────────────────
         llm=anthropic.LLM(
-           model="claude-sonnet-4-20250514",   # 3× faster than Sonnet
-            temperature=0.3,                      # slightly lower = faster, more focused
-            max_tokens=180,                       # short voice answers; saves generation time
-            caching="ephemeral",                  # cache system prompt after first use
+            model="claude-sonnet-4-20250514",
+            temperature=0.3,
+            max_tokens=1200,  # must be high enough for full context JSON (~600 tokens)
+            caching="ephemeral",
         ),
-
-        # ── TTS ──────────────────────────────────────────────────────────
         tts=build_tts(language),
-
-        # ── VAD ──────────────────────────────────────────────────────────
         vad=silero.VAD.load(
-            min_speech_duration=0.05,      # detect speech faster (default 0.05)
-            min_silence_duration=0.2,      # commit end-of-turn sooner (default 0.55)
-            prefix_padding_duration=0.1,   # less pre-speech buffer (default 0.5)
-            activation_threshold=0.65,     # slightly higher = less false triggers
+            min_speech_duration=0.05,
+            min_silence_duration=0.2,
+            prefix_padding_duration=0.1,
+            activation_threshold=0.65,
         ),
-
-        # ── Session-level speed tuning ───────────────────────────────────
-        preemptive_generation=True,        # start LLM while TTS still playing
-        allow_interruptions=True,          # natural conversational interruptions
-        min_endpointing_delay=0.08,        # commit turn in 80ms after VAD silence
-        max_endpointing_delay=1.8,         # give max 1.8s for trailing silence
-        min_interruption_duration=0.4,     # ignore <400ms noise as interruption
-        min_interruption_words=2,          # need at least 2 words to count as interruption
-        turn_detection="vad",              # use VAD for turn detection (fastest)
+        preemptive_generation=True,
+        allow_interruptions=True,
+        min_endpointing_delay=0.08,
+        max_endpointing_delay=1.8,
+        min_interruption_duration=0.4,
+        min_interruption_words=2,
+        turn_detection="vad",
     )
 
-    # ── Event listeners ──────────────────────────────────────────────────
     @session.on("conversation_item_added")
     def on_item_added(event):
         item = event.item
-        role = getattr(item, "role", None)
 
-        content = ""
-        raw = getattr(item, "content", None)
-        if isinstance(raw, str):
-            content = raw
-        elif isinstance(raw, list):
-            for block in raw:
-                if hasattr(block, "text"):
-                    content += block.text
-                elif isinstance(block, str):
-                    content += block
+        # Only process ChatMessage items (not AgentHandoff etc.)
+        if not hasattr(item, "role"):
+            return
 
-        if role and content and role != "user":
-            agent._transcript.append({"role": role, "text": content})
-            logger.info(f"[{role}] {content[:120]}")
+        role = item.role
 
-            if role == "assistant" and not agent._context_emitted and "<context_json>" in content:
-                import asyncio
-                asyncio.create_task(_emit_context(agent, content))
+        # Extract text using the proper text_content property
+        text = ""
+        if hasattr(item, "text_content") and item.text_content:
+            text = item.text_content.strip()
+        elif hasattr(item, "content"):
+            raw = item.content
+            if isinstance(raw, str):
+                text = raw.strip()
+            elif isinstance(raw, list):
+                parts = []
+                for b in raw:
+                    if isinstance(b, str):
+                        parts.append(b)
+                    elif hasattr(b, "text"):
+                        parts.append(b.text)
+                text = " ".join(parts).strip()
+
+        if not text:
+            return
+
+        # User messages are already captured in on_user_turn_completed
+        # Only capture assistant messages here to avoid duplicates
+        if role == "assistant":
+            # Deduplicate — don't add if last entry is identical
+            if not agent._transcript or agent._transcript[-1].get("text") != text:
+                agent._transcript.append({"role": "assistant", "text": text})
+            logger.info(f"[assistant] {text[:120]}")
+
+            # Accumulate text across messages for context JSON detection
+            # The JSON may be in a separate message from the termination phrase
+            agent._accumulated_text = getattr(agent, "_accumulated_text", "") + "\n" + text
+            full_text = agent._accumulated_text
+
+            # Check for context JSON in current message or accumulated buffer
+            if not agent._context_emitted:
+                if "<context_json>" in text and "</context_json>" in text:
+                    # Complete JSON in one message — ideal case
+                    import asyncio
+                    asyncio.create_task(_emit_context(agent, text))
+                elif "<context_json>" in full_text and "</context_json>" in full_text:
+                    # JSON spans multiple messages — use accumulated buffer
+                    import asyncio
+                    asyncio.create_task(_emit_context(agent, full_text))
 
     @session.on("error")
     def on_error(event):
         logger.error(f"Session error: {event.error}")
 
-    # ── Start ─────────────────────────────────────────────────────────────
     await session.start(
         room=ctx.room,
         agent=agent,
@@ -271,9 +359,9 @@ async def _emit_context(agent: LaunchpadAgent, text: str):
 
     try:
         payload = json.dumps({
-            "type": "context_ready",
+            "type":       "context_ready",
             "session_id": agent.session_id,
-            "context": context,
+            "context":    context,
         }).encode()
 
         if agent._room:

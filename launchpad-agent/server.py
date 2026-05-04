@@ -1,15 +1,5 @@
 """
 Token server — issues LiveKit access tokens for the frontend.
-
-POST /token
-  Body: { "category": "immigration", "language": "en", "identity": "user-abc" }
-  Returns: { "token": "<jwt>", "session_id": "<uuid>", "ws_url": "<livekit-ws-url>" }
-
-GET /sessions
-  Returns list of completed sessions (for advisor dashboard)
-
-GET /sessions/{session_id}
-  Returns a single session context
 """
 
 import json
@@ -27,15 +17,15 @@ from utils import get_session, list_sessions
 
 load_dotenv()
 
-LIVEKIT_URL = os.getenv("LIVEKIT_URL", "wss://your-project.livekit.cloud")
-LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY", "")
+LIVEKIT_URL      = os.getenv("LIVEKIT_URL", "wss://your-project.livekit.cloud")
+LIVEKIT_API_KEY  = os.getenv("LIVEKIT_API_KEY", "")
 LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET", "")
 
 app = FastAPI(title="Launchpad Voice Token Server")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten in production
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -53,13 +43,14 @@ async def create_token(req: TokenRequest):
         raise HTTPException(status_code=500, detail="LiveKit credentials not configured")
 
     session_id = str(uuid.uuid4())
-    identity = req.identity or f"founder-{session_id[:8]}"
-    room_name = f"launchpad-{session_id}"
+    identity   = req.identity or f"founder-{session_id[:8]}"
 
-    # Room metadata carries session config to the agent worker
-    room_metadata = json.dumps({
-        "category": req.category,
-        "language": req.language,
+    # Room name encodes category + session for easy debugging
+    room_name  = f"launchpad-{req.category}-{session_id}"
+
+    session_meta = json.dumps({
+        "category":   req.category,
+        "language":   req.language,
         "session_id": session_id,
     })
 
@@ -67,6 +58,14 @@ async def create_token(req: TokenRequest):
         AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
         .with_identity(identity)
         .with_name(identity)
+        # Participant metadata — read by agent from remote participant
+        .with_metadata(session_meta)
+        # Also set as participant attributes for extra reliability
+        .with_attributes({
+            "category":   req.category,
+            "language":   req.language,
+            "session_id": session_id,
+        })
         .with_grants(
             VideoGrants(
                 room_join=True,
@@ -75,16 +74,18 @@ async def create_token(req: TokenRequest):
                 can_subscribe=True,
             )
         )
-        .with_metadata(room_metadata)
         .to_jwt()
     )
 
     return {
-        "token": token,
+        "token":      token,
         "session_id": session_id,
-        "room_name": room_name,
-        "ws_url": LIVEKIT_URL,
-        "identity": identity,
+        "room_name":  room_name,
+        "ws_url":     LIVEKIT_URL,
+        "identity":   identity,
+        # Echo back so frontend can confirm what was sent
+        "category":   req.category,
+        "language":   req.language,
     }
 
 

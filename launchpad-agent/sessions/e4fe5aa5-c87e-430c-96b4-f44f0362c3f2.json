@@ -1,0 +1,155 @@
+{
+  "session_id": "e4fe5aa5-c87e-430c-96b4-f44f0362c3f2",
+  "timestamp": "2024-12-19T10:30:00Z",
+  "category": "immigration",
+  "language": "en",
+  "urgency_score": 8,
+  "founder": {
+    "name": "Abdul Majid",
+    "company": "Motibug",
+    "stage": "pre-seed",
+    "nationality": "Nigeria",
+    "current_visa": "none",
+    "visa_status": "outside_us"
+  },
+  "issue": {
+    "type": "new_application",
+    "visa_category": "H-1B",
+    "description": "Nigerian founder seeking H-1B sponsorship for his pre-seed company Motibug, currently outside the US with no sponsor identified.",
+    "hard_deadline": "2025-01-19",
+    "days_to_deadline": 31
+  },
+  "prior_actions": {
+    "attorney_engaged": false,
+    "attorney_notes": null,
+    "filings_made": false,
+    "notices_received": [],
+    "prior_violations": false,
+    "prior_violation_details": null
+  },
+  "business_impact": {
+    "affects_hiring": false,
+    "affects_travel": true,
+    "affects_fundraising": true,
+    "description": "Unable to meet with investors in person, impacting fundraising efforts"
+  },
+  "desired_outcome": "Get to the US as quickly as possible to meet with investors and grow the business",
+  "advisor_recommendations": [
+    "Educate founder that H-1B sponsorship timeline makes next month start impossible",
+    "Explore faster alternatives like B-1/B-2 for investor meetings or O-1A for founders",
+    "Consider E-2 investor visa if founder has substantial investment capital",
+    "Develop comprehensive immigration strategy aligned with business goals"
+  ],
+  "suggested_specialists": [
+    "Startup immigration attorney",
+    "O-1A specialist",
+    "E-2 visa specialist"
+  ],
+  "transcript_summary": "Abdul Majid, Nigerian founder of pre-seed company Motibug, seeks H-1B sponsorship to enter the US next month for investor meetings. He's currently outside the US with no sponsor identified and hasn't engaged legal counsel. The extremely tight timeline and lack of sponsor make H-1B unfeasible, requiring exploration of alternative visa strategies.",
+  "transcript": [
+    {
+      "role": "assistant",
+      "text": "Hi there! I'm your Launchpad immigration advisor, and I'm here to help you navigate your visa challenges. What's your name and what's your company called?"
+    },
+    {
+      "role": "user",
+      "text": "My name is Abdul Majid, and my"
+    },
+    {
+      "role": "user",
+      "text": "company's name is Motibug."
+    },
+    {
+      "role": "assistant",
+      "text": "Nice to meet you, Abdul. What stage is Motibug at right now - are you pre-seed, seed, or further along?"
+    },
+    {
+      "role": "user",
+      "text": "Receipt."
+    },
+    {
+      "role": "assistant",
+      "text": "I'm not sure I caught that - could you tell me what stage your company Motibug is at? Are you pre-seed, seed, Series A, or at another stage?"
+    },
+    {
+      "role": "user",
+      "text": "I'm currently at CVA."
+    },
+    {
+      "role": "assistant",
+      "text": "Thanks Abdul. What's your nationality, and what type of visa are you currently on in the US?"
+    },
+    {
+      "role": "user",
+      "text": "My nationality, I'm from Nigeria."
+    },
+    {
+      "role": "user",
+      "text": "And I'm looking for h one b visa."
+    },
+    {
+      "role": "assistant",
+      "text": "Got it - you're Nigerian and looking to get an H-1B visa. What's your current visa status right now? Are you on a different visa type, or are you outside the US?"
+    },
+    {
+      "role": "user",
+      "text": "I'm outside The US."
+    },
+    {
+      "role": "assistant",
+      "text": "Understood - you're in Nigeria right now seeking an H-1B. What's the specific challenge you're facing with getting the H-1B? Is it finding a sponsor, the application process, or something else?"
+    },
+    {
+      "role": "user",
+      "text": "Yes. Finding the sponsor."
+    },
+    {
+      "role": "assistant",
+      "text": "I see - you need to find an H-1B sponsor for your company Motibug. Do you have any hard deadlines you're working against, like when you need to be in the US or any specific dates that matter for your business?"
+    },
+    {
+      "role": "user",
+      "text": "Yeah. I would love to begin my"
+    },
+    {
+      "role": "user",
+      "text": "next month."
+    },
+    {
+      "role": "assistant",
+      "text": "You want to start next month - that's a very tight timeline since H-1B sponsorship typically takes much longer. Have you already spoken with any immigration attorneys or taken any steps toward finding sponsors?"
+    },
+    {
+      "role": "user",
+      "text": "No."
+    },
+    {
+      "role": "assistant",
+      "text": "Okay, so you haven't engaged an attorney yet. How is not having US work authorization affecting your company right now? Is it impacting your ability to hire, meet with investors, or grow the business?"
+    },
+    {
+      "role": "user",
+      "text": "Meet with investors."
+    },
+    {
+      "role": "assistant",
+      "text": "So not being able to meet with investors in person is the main impact on your business. Have you had any previous visa denials or immigration issues with the US or any other country?"
+    },
+    {
+      "role": "user",
+      "text": "No."
+    },
+    {
+      "role": "assistant",
+      "text": "Good, no prior issues. What would the ideal outcome look like for you - do you want to get to the US as quickly as possible, or are you open to exploring different visa options that might work better for your situation as a founder?"
+    },
+    {
+      "role": "user",
+      "text": "I would love to get there as quickly as possible."
+    },
+    {
+      "role": "assistant",
+      "text": "Thank you \u2014 I have everything I need to prepare a full brief for your immigration attorney. Give me just a moment.\n\n<context_json>\n{\n  \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"timestamp\": \"2024-12-19T10:30:00Z\",\n  \"category\": \"immigration\",\n  \"language\": \"en\",\n  \"urgency_score\": 8,\n  \"founder\": {\n    \"name\": \"Abdul Majid\",\n    \"company\": \"Motibug\",\n    \"stage\": \"pre-seed\",\n    \"nationality\": \"Nigeria\",\n    \"current_visa\": \"none\",\n    \"visa_status\": \"outside_us\"\n  },\n  \"issue\": {\n    \"type\": \"new_application\",\n    \"visa_category\": \"H-1B\",\n    \"description\": \"Nigerian founder seeking H-1B sponsorship for his pre-seed company Motibug, currently outside the US with no sponsor identified.\",\n    \"hard_deadline\": \"2025-01-19\",\n    \"days_to_deadline\": 31\n  },\n  \"prior_actions\": {\n    \"attorney_engaged\": false,\n    \"attorney_notes\": null,\n    \"filings_made\": false,\n    \"notices_received\": [],\n    \"prior_violations\": false,\n    \"prior_violation_details\": null\n  },\n  \"business_impact\": {\n    \"affects_hiring\": false,\n    \"affects_travel\": true,\n    \"affects_fundraising\": true,\n    \"description\": \"Unable to meet with investors in person, impacting fundraising efforts\"\n  },\n  \"desired_outcome\": \"Get to the US as quickly as possible to meet with investors and grow the business\",\n  \"advisor_recommendations\": [\n    \"Educate founder that H-1B sponsorship timeline makes next month start impossible\",\n    \"Explore faster alternatives like B-1/B-2 for investor meetings or O-1A for founders\",\n    \"Consider E-2 investor visa if founder has substantial investment capital\",\n    \"Develop comprehensive immigration strategy aligned with business goals\"\n  ],\n  \"suggested_specialists\": [\"Startup immigration attorney\", \"O-1A specialist\", \"E-2 visa specialist\"],\n  \"transcript_summary\": \"Abdul Majid, Nigerian founder of pre-seed company Motibug, seeks H-1B sponsorship to enter the US next month for investor meetings. He's currently outside the US with no sponsor identified and hasn't engaged legal counsel. The extremely tight timeline and lack of sponsor make H-1B unfeasible, requiring exploration of alternative visa strategies.\"\n}\n</context_json>"
+    }
+  ]
+}
